@@ -12,6 +12,8 @@
     "start:dev": "cross-env NODE_ENV=local nest start --watch",
     "migrate:dev": "cross-env NODE_ENV=local npx sequelize db:migrate",
     "seed:dev": "cross-env NODE_ENV=local npx sequelize-cli db:seed:all",
+    "db:create:dev": "cross-env NODE_ENV=local npx sequelize db:create",
+    "db:create:prod": "cross-env NODE_ENV=production npx sequelize db:create",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
