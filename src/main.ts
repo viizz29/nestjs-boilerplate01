@@ -1,39 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
-import {
-  API_BASE_URL,
-  APP_ENV,
-  DOCS_URL,
-  FRONTEND_BUILD_PATH,
-  PORT,
-} from './config';
+import { API_BASE_URL, APP_ENV, DOCS_URL, PORT } from './config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { join, resolve } from 'path';
-import { existsSync } from 'fs';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import type { Request, Response, NextFunction } from 'express';
-
-function normalizeRoutePrefix(prefix: string): string {
-  if (!prefix || prefix === '/') {
-    return '';
-  }
-
-  return `/${prefix.replace(/^\/+|\/+$/g, '')}`;
-}
-
-function shouldBypassFrontendRoute(
-  requestPath: string,
-  excludedPrefixes: string[],
-): boolean {
-  return excludedPrefixes.some(
-    (prefix) => requestPath === prefix || requestPath.startsWith(`${prefix}/`),
-  );
-}
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const expressApp = app.getHttpAdapter().getInstance();
 
   // Define the base URL prefix for all routes
   app.setGlobalPrefix(API_BASE_URL);
@@ -86,39 +59,6 @@ async function bootstrap() {
   //   credentials: true,
   //   allowedHeaders: ['Content-Type', 'Authorization'],
   // });
-
-  const frontendBuildPath = FRONTEND_BUILD_PATH
-    ? resolve(FRONTEND_BUILD_PATH)
-    : '';
-
-  if (frontendBuildPath) {
-    if (!existsSync(frontendBuildPath)) {
-      console.warn(
-        `FRONTEND_BUILD_PATH does not exist: ${frontendBuildPath}. Skipping static frontend hosting.`,
-      );
-    } else {
-      const indexFilePath = join(frontendBuildPath, 'index.html');
-      const apiPrefix = normalizeRoutePrefix(API_BASE_URL);
-      const docsPrefix = normalizeRoutePrefix(DOCS_URL);
-
-      app.useStaticAssets(frontendBuildPath);
-
-      expressApp.get(
-        /.*/,
-        (req: Request, res: Response, next: NextFunction) => {
-          if (
-            (apiPrefix && shouldBypassFrontendRoute(req.path, [apiPrefix])) ||
-            req.path === docsPrefix ||
-            req.path.startsWith(`${docsPrefix}/`)
-          ) {
-            return next();
-          }
-
-          return res.sendFile(indexFilePath);
-        },
-      );
-    }
-  }
 
   await app.listen(PORT);
 }

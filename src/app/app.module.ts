@@ -2,6 +2,7 @@ import {
   DB_DATABASE,
   DB_PASSWORD,
   DB_USERNAME,
+  FRONTEND_BUILD_PATH,
   SOCKETIO_ENDPOINT_ON,
 } from '../config';
 import { Module } from '@nestjs/common';
@@ -13,7 +14,6 @@ import { NotesModule } from '../modules/notes/notes.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ChatModule } from '../modules/chat/chat.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 
 const imports = [
   AuthModule,
@@ -33,7 +33,7 @@ const imports = [
     },
   }),
   ServeStaticModule.forRoot({
-    rootPath: join(__dirname, '../..', 'public'),
+    rootPath: FRONTEND_BUILD_PATH,
   }),
 ];
 

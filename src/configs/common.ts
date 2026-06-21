@@ -1,11 +1,11 @@
 import { PROJECT_LOCATION } from './base';
-import path from 'path';
+import path, { join } from 'path';
 
 export const RESOURCES_LOCATION = `${PROJECT_LOCATION}/res`;
 
 export const FRONTEND_BUILD_PATH = process.env.FRONTEND_BUILD_PATH
   ? process.env.FRONTEND_BUILD_PATH
-  : '';
+  : join(__dirname, '../..', 'public');
 
 export const APP_VERSION = process.env.APP_VERSION
   ? process.env.APP_VERSION
