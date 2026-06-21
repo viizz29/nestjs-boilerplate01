@@ -48,7 +48,7 @@ async function bootstrap() {
   SwaggerModule.setup(DOCS_URL, app, document, {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: `${APP_ENV}`,
-    customJs: `/assets/swagger-init.js`,
+    customJs: `/api/swagger-init.js`,
   });
 
   // Enable CORS for all origins
